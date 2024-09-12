@@ -21,7 +21,8 @@ function FinishedScreen({ dispatch, points, maxPossiblePoint }) {
       <div className="finished-screen">
         <p>{emoji}</p>
         <h2>
-          You scored {points} out of {maxPossiblePoint} ({percentage}%)
+          You scored {points} points out of {maxPossiblePoint} - (
+          {Math.ceil(percentage)}%)
         </h2>
         <button
           className="btn restart-btn"

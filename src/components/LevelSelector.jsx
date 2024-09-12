@@ -1,11 +1,6 @@
 import { IoArrowUndo } from "react-icons/io5";
 
-function LevelSelector({
-  dispatch,
-  selectedSubject,
-  noOfQuestions,
-  difficultyLevel,
-}) {
+function LevelSelector({ dispatch, categoryName, amount, difficulty }) {
   return (
     <>
       <div className="level-selector subject-selector">
@@ -20,13 +15,13 @@ function LevelSelector({
       </div>
       <div className="level-selector-title">
         <h2>
-          Dive into the world of <span> {selectedSubject}</span>
+          Dive into the world of <span>{categoryName}</span>
         </h2>
       </div>
       <div className="select-level">
         <select
           className="select"
-          value={difficultyLevel}
+          value={difficulty}
           onChange={(e) =>
             dispatch({ type: "SelectedDifficulty", payload: e.target.value })
           }
@@ -41,8 +36,8 @@ function LevelSelector({
           <label htmlFor="questions">Chose No of questions</label>
           <input
             type="range"
-            value={noOfQuestions}
-            min="1"
+            value={amount}
+            min="5"
             max="30"
             onChange={(e) =>
               dispatch({
@@ -51,10 +46,10 @@ function LevelSelector({
               })
             }
           />
-          <p>{noOfQuestions}</p>
+          <p>{amount}</p>
         </div>
       </div>
-      {difficultyLevel && noOfQuestions ? (
+      {difficulty && amount ? (
         <button
           className="start-quiz btn"
           onClick={() => dispatch({ type: "StartQuiz" })}

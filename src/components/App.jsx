@@ -21,25 +21,40 @@ const SECS_PER_QUESTION = 30;
 const initialState = {
   // home, subjectSelection, difficultyAndQty, loading, error, ready, active, finished
   status: "home",
-  selectedSubject: "",
-  noOfQuestions: 0,
-  difficultyLevel: "",
-
-  //   category: 9,
-  //   difficulty: "easy",
-  //   amount: 10,
-
-  category: 9,
-  difficulty: "easy",
-  amount: 10,
-
-  error: "",
+  category: 0,
+  difficulty: "",
+  amount: 0,
   questions: [],
+  error: "",
   index: 0,
   answer: null,
   secondsRemaining: null,
   point: 0,
-  maxPossiblePoint: 50,
+  maxPossiblePoint: null,
+  categoryName: "",
+};
+
+const subjects = [
+  { name: "General Knowledge", id: 9 },
+  { name: "Computer", id: 18 },
+  { name: "Mythology", id: 20 },
+  { name: "Nature", id: 17 },
+  { name: "Sports", id: 21 },
+  { name: "History", id: 23 },
+  { name: "Animals", id: 27 },
+];
+
+const assignPoints = (difficulty) => {
+  switch (difficulty) {
+    case "easy":
+      return 5;
+    case "medium":
+      return 10;
+    case "hard":
+      return 15;
+    default:
+      return 0;
+  }
 };
 
 const reducer = (state, action) => {
@@ -50,21 +65,22 @@ const reducer = (state, action) => {
     case "BackHome": {
       return { ...state, status: "home" };
     }
-    case "LevelAndQty": {
+    case "CategorySelected": {
       return {
         ...state,
-        status: "difficultyAndQty",
-        selectedSubject: action.payload,
+        status: "categorySelect",
+        category: action.payload.id,
+        categoryName: action.payload.name,
       };
     }
     case "BackToSubjects": {
       return { ...state, status: "subjectSelection" };
     }
     case "SelectedDifficulty": {
-      return { ...state, difficultyLevel: action.payload };
+      return { ...state, difficulty: action.payload };
     }
     case "SelectedNoOfQuestion": {
-      return { ...state, noOfQuestions: Number(action.payload) };
+      return { ...state, amount: Number(action.payload) };
     }
     case "StartQuiz":
       return {
@@ -73,30 +89,23 @@ const reducer = (state, action) => {
         secondsRemaining: state.questions.length * SECS_PER_QUESTION,
       };
     case "DataRecieved":
+      const maxPoints =
+        assignPoints(action.payload[0]?.difficulty || "easy") *
+        action.payload.length;
+
       return {
         ...state,
         status: "active",
-        // amount: action.payload,
-        // category: action.payload,
-        // difficulty: action.payload,
+        amount: action.payload.length,
+        category: state.category,
+        difficulty: state.difficulty,
         questions: action.payload,
+        maxPossiblePoint: maxPoints,
       };
     case "DataFailed":
       return { ...state, status: "error", error: action.payload };
     case "NewAnswer":
       const question = state.questions.at(state.index);
-      const assignPoints = (difficulty) => {
-        switch (difficulty) {
-          case "easy":
-            return 5;
-          case "medium":
-            return 10;
-          case "hard":
-            return 15;
-          default:
-            return 0;
-        }
-      };
       const pointsEarned = assignPoints(question.difficulty);
       return {
         ...state,
@@ -133,10 +142,8 @@ function App() {
 
   const {
     status,
-    selectedSubject,
-    noOfQuestions,
-    difficultyLevel,
     category,
+    categoryName,
     difficulty,
     amount,
     questions,
@@ -155,6 +162,9 @@ function App() {
         const url = `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&type=multiple`;
 
         const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Error fetching data");
+        }
         const data = await response.json();
         console.log(data);
         dispatch({ type: "DataRecieved", payload: data.results });
@@ -182,15 +192,15 @@ function App() {
         <MainBody>
           {status === "loading" && <Loader />}
           {status === "subjectSelection" && (
-            <SubjectSelector dispatch={dispatch} />
+            <SubjectSelector dispatch={dispatch} subjects={subjects} />
           )}
         </MainBody>
-        {status === "difficultyAndQty" && (
+        {status === "categorySelect" && (
           <LevelSelector
             dispatch={dispatch}
-            selectedSubject={selectedSubject}
-            noOfQuestions={noOfQuestions}
-            difficultyLevel={difficultyLevel}
+            categoryName={categoryName}
+            amount={amount}
+            difficulty={difficulty}
           />
         )}
         {status === "error" && <Error />}
