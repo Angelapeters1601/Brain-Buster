@@ -13,6 +13,10 @@ import Error from "./Error";
 import NextButton from "./NextButton";
 import Timer from "./Timer";
 import QuizFooter from "./QuizFooter";
+import FinishedScreen from "./FinishedScreen";
+import Progress from "./Progress";
+
+const SECS_PER_QUESTION = 30;
 
 const initialState = {
   // home, subjectSelection, difficultyAndQty, loading, error, ready, active, finished
@@ -20,13 +24,22 @@ const initialState = {
   selectedSubject: "",
   noOfQuestions: 0,
   difficultyLevel: "",
+
+  //   category: 9,
+  //   difficulty: "easy",
+  //   amount: 10,
+
   category: 9,
   difficulty: "easy",
   amount: 10,
+
   error: "",
   questions: [],
   index: 0,
   answer: null,
+  secondsRemaining: null,
+  point: 0,
+  maxPossiblePoint: 50,
 };
 
 const reducer = (state, action) => {
@@ -54,7 +67,11 @@ const reducer = (state, action) => {
       return { ...state, noOfQuestions: Number(action.payload) };
     }
     case "StartQuiz":
-      return { ...state, status: "loading" };
+      return {
+        ...state,
+        status: "loading",
+        secondsRemaining: state.questions.length * SECS_PER_QUESTION,
+      };
     case "DataRecieved":
       return {
         ...state,
@@ -67,9 +84,45 @@ const reducer = (state, action) => {
     case "DataFailed":
       return { ...state, status: "error", error: action.payload };
     case "NewAnswer":
-      return { ...state, answer: action.paload };
+      const question = state.questions.at(state.index);
+      const assignPoints = (difficulty) => {
+        switch (difficulty) {
+          case "easy":
+            return 5;
+          case "medium":
+            return 10;
+          case "hard":
+            return 15;
+          default:
+            return 0;
+        }
+      };
+      const pointsEarned = assignPoints(question.difficulty);
+      return {
+        ...state,
+        answer: action.payload,
+        point:
+          action.payload === question.correct_answer
+            ? state.point + pointsEarned
+            : state.point,
+      };
     case "NextQuestion":
       return { ...state, index: state.index + 1, answer: null };
+    case "Finish":
+      return { ...state, status: "finished" };
+    case "Restart":
+      return {
+        ...initialState,
+        questions: state.questions,
+        status: "subjectSelection",
+        answer: null,
+      };
+    case "Tick":
+      return {
+        ...state,
+        secondsRemaining: state.secondsRemaining - 1,
+        status: state.secondsRemaining === 0 ? "finished" : state.status,
+      };
     default:
       throw new Error("unknown action");
   }
@@ -86,11 +139,15 @@ function App() {
     category,
     difficulty,
     amount,
-    error,
     questions,
+    point,
     index,
     answer,
+    secondsRemaining,
+    maxPossiblePoint,
   } = state;
+
+  const numQuestions = questions.length;
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -139,6 +196,15 @@ function App() {
         {status === "error" && <Error />}
         {status === "active" && (
           <>
+            <Progress
+              numQuestions={numQuestions}
+              dispatch={dispatch}
+              answer={answer}
+              index={index}
+              points={point}
+              maxPossiblePoint={maxPossiblePoint}
+              questions={questions}
+            />
             <Question
               questions={questions[index]}
               answer={answer}
@@ -146,10 +212,22 @@ function App() {
               index={index}
             />
             <QuizFooter>
-              <Timer />
-              <NextButton dispatch={dispatch} index={index} answer={answer} />
+              <Timer dispatch={dispatch} secondsRemaining={secondsRemaining} />
+              <NextButton
+                dispatch={dispatch}
+                index={index}
+                numQuestions={numQuestions}
+                answer={answer}
+              />
             </QuizFooter>
           </>
+        )}
+        {status === "finished" && (
+          <FinishedScreen
+            dispatch={dispatch}
+            points={point}
+            maxPossiblePoint={maxPossiblePoint}
+          />
         )}
       </div>
       <Footer />

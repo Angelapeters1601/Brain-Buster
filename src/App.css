@@ -397,10 +397,56 @@ body {
   margin-top: 50px;
 }
 
+.progress {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  padding: 20px;
+  gap: 30px;
+  max-width: 97%;
+}
+
+.progress progress {
+  width: 100%;
+  height: 15px;
+  border-radius: 15px;
+  box-shadow: inset var(--shadow);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+progress::-webkit-progress-bar {
+  background-color: var(--radial);
+  border-radius: 15px;
+}
+
+progress::-webkit-progress-value {
+  background-color: rgb(105, 101, 101);
+  border-radius: 15px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 10px;
+  margin-bottom: -25px;
+}
+
+.progress-info p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  font-family: "SUSE", sans-serif;
+  color: var(--brown);
+}
+
 .question {
   display: flex;
   flex-direction: column;
-  margin: 140px auto;
+  margin: 20px auto;
   width: 90%;
   font-family: "SUSE", sans-serif;
   padding: 20px;
@@ -427,36 +473,36 @@ body {
   padding: 20px;
   border-radius: 20px;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
   box-shadow: var(--shadow);
-}
-
-.option:hover {
-  background-color: transparent;
-  transform: translateX(10px);
-  color: var(--brown);
-  font-weight: 800;
-}
-
-.answer-check {
   border: 2px solid var(--light);
   color: var(--brown);
   font-family: "SUSE", sans-serif;
   font-size: 1.2rem;
   font-weight: 600;
+  transition: all 0.3s ease-in-out;
+}
+
+.option:hover {
+  transform: translateX(10px);
+  font-weight: 800;
 }
 
 .answer {
-  background-color: var(--brown);
-  color: var(--light);
+  background-color: transparent;
+  color: var(--brown);
 }
 
 .correct {
-  background-color: green;
+  background-color: rgb(131, 224, 131);
+  border: none;
+  font-weight: 800;
 }
 
 .incorrect {
-  background-color: red;
+  background-color: rgb(114, 56, 56);
+  color: #000;
+  border: none;
+  font-weight: 800;
 }
 
 .quiz-footer {
@@ -465,7 +511,7 @@ body {
   width: 90%;
   margin: 0 auto;
   padding: 0 50px;
-  margin-top: -110px;
+  margin-top: 25px;
 }
 
 .timer {
@@ -496,6 +542,38 @@ body {
 .next-btn:hover {
   background-color: var(--brown);
   transform: scale(1.05);
+}
+
+.finished-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 90px auto;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  background: var(--radial);
+  padding: 20px;
+}
+
+.finished-screen p {
+  text-align: center;
+  font-family: "SUSE", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 15px;
+}
+
+.finished-screen h2 {
+  font-weight: 800;
+  font-family: "SUSE", sans-serif;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.restart-btn {
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 1.2rem;
 }
 
 .footer {

@@ -1,5 +1,23 @@
-function Timer() {
-  return <div className="timer">12:22</div>;
+import React, { useEffect } from "react";
+
+function Timer({ dispatch, secondsRemaining }) {
+  const mins = Math.floor(secondsRemaining / 60);
+  const seconds = secondsRemaining % 60;
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      dispatch({ type: "Tick" });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [dispatch]);
+
+  return (
+    <div className="timer">
+      {mins < 10 && "0"}
+      {mins}:{seconds < 10 && "0"}
+      {seconds}
+    </div>
+  );
 }
 
 export default Timer;

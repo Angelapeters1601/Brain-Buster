@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-function Options({ questions, dispatch, answer, index }) {
+function Options({ questions, dispatch, answer }) {
   const [shuffledOptions, setShuffledOptions] = useState([]);
   const hasAnswered = answer !== null;
 
@@ -33,22 +33,29 @@ function Options({ questions, dispatch, answer, index }) {
 
   return (
     <div className="options">
-      {shuffledOptions.map((option, index) => (
-        <button
-          key={option}
-          className={`option answer-check ${index === answer ? "answer" : ""}
-          ${
-            hasAnswered
-              ? index === questions.correct_answer
-                ? "correct"
-                : "incorrect"
-              : ""
-          }`}
-          onClick={() => dispatch({ type: "NewAnswer", payload: index })}
-        >
-          {option}
-        </button>
-      ))}
+      {shuffledOptions.map((option) => {
+        const isCorrect =
+          option === decodeHtmlEntities(questions.correct_answer);
+        const isChosen = option === answer;
+        return (
+          <button
+            key={option}
+            disabled={hasAnswered}
+            className={`option ${
+              hasAnswered
+                ? isCorrect
+                  ? "correct"
+                  : isChosen
+                  ? "incorrect"
+                  : "answer"
+                : ""
+            }`}
+            onClick={() => dispatch({ type: "NewAnswer", payload: option })}
+          >
+            {option}
+          </button>
+        );
+      })}
     </div>
   );
 }
