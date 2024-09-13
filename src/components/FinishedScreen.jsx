@@ -13,7 +13,7 @@ function FinishedScreen({ dispatch, points, maxPossiblePoint }) {
   return (
     <>
       <button
-        className="back-home-btn"
+        className="back-home-btn finish-btn"
         onClick={() => dispatch({ type: "BackHome" })}
       >
         <IoArrowUndo />

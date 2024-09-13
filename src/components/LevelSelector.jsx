@@ -33,7 +33,7 @@ function LevelSelector({ dispatch, categoryName, amount, difficulty }) {
         </select>
 
         <div className="select-level-input">
-          <label htmlFor="questions">Chose No of questions</label>
+          <label htmlFor="questions">Choose No of questions</label>
           <input
             type="range"
             value={amount}
