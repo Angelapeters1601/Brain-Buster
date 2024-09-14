@@ -67,10 +67,10 @@ function FinishedScreen({ dispatch, points, maxPossiblePoint, highscore }) {
         </motion.p>
 
         <motion.h2>
-          You scored {points} points out of {maxPossiblePoint} (
+          You scored {points} out of {maxPossiblePoint} points (
           {Math.ceil(percentage)}%)
         </motion.h2>
-        <p>(Highscore: {highscore})</p>
+        <p>(Your highest score: {highscore})</p>
 
         <motion.button
           className="btn restart-btn"
