@@ -605,7 +605,7 @@ progress::-webkit-progress-value {
   font-family: "SUSE", sans-serif;
   color: var(--brown);
   text-decoration: underline;
-  margin: 50px;
+  margin: 20px;
 }
 
 /* media Queries */
