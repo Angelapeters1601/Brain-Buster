@@ -1,24 +1,64 @@
 import { IoArrowUndo } from "react-icons/io5";
+import { motion } from "framer-motion"; // Import framer-motion
 
 function LevelSelector({ dispatch, categoryName, amount, difficulty }) {
+  // Define variants for animations
+  const containerVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 80, delay: 0.3 },
+    },
+  };
+
+  const buttonVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { duration: 0.6, delay: 0.3 },
+    },
+  };
+
   return (
     <>
-      <div className="level-selector subject-selector">
-        <button
+      <motion.div
+        className="level-selector subject-selector"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants} // Add animation variants for the container
+      >
+        <motion.button
           className="back-home-btn"
           onClick={() => dispatch({ type: "BackToSubjects" })}
+          variants={buttonVariants} // Button animation
+          initial="hidden"
+          animate="visible"
         >
           <IoArrowUndo />
-        </button>
+        </motion.button>
 
         <h2>Select level of difficulty 😈</h2>
-      </div>
-      <div className="level-selector-title">
+      </motion.div>
+
+      <motion.div
+        className="level-selector-title"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
         <h2>
           Dive into the world of <span>{categoryName}</span>
         </h2>
-      </div>
-      <div className="select-level">
+      </motion.div>
+
+      <motion.div
+        className="select-level"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        {/* Animate the select dropdown */}
         <select
           className="select"
           value={difficulty}
@@ -48,14 +88,18 @@ function LevelSelector({ dispatch, categoryName, amount, difficulty }) {
           />
           <p>{amount}</p>
         </div>
-      </div>
+      </motion.div>
+
       {difficulty && amount ? (
-        <button
+        <motion.button
           className="start-quiz btn"
           onClick={() => dispatch({ type: "StartQuiz" })}
+          variants={buttonVariants} // Animate the start button
+          initial="hidden"
+          animate="visible"
         >
           Start Quiz
-        </button>
+        </motion.button>
       ) : null}
     </>
   );

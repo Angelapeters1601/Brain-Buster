@@ -399,6 +399,24 @@ body {
   margin-top: 50px;
 }
 
+.retry-btn {
+  background-color: red;
+  color: var(--background);
+  font-weight: 800;
+  padding: 10px 20px;
+  letter-spacing: 1px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 15px;
+  transition: all 0.3s ease-in-out;
+}
+
+.retry-btn:hover {
+  background: var(--gradient);
+}
+
 .progress {
   display: flex;
   flex-direction: column;
@@ -417,7 +435,6 @@ body {
   box-shadow: inset var(--shadow);
   appearance: none;
   -webkit-appearance: none;
-  -moz-appearance: none;
 }
 
 progress::-webkit-progress-bar {
@@ -428,6 +445,7 @@ progress::-webkit-progress-bar {
 progress::-webkit-progress-value {
   background-color: rgb(105, 101, 101);
   border-radius: 15px;
+  transition: all 0.35s;
 }
 
 .progress-info {

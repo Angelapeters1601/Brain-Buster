@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion"; // Import framer-motion
 
 function Options({ questions, dispatch, answer }) {
   const [shuffledOptions, setShuffledOptions] = useState([]);
@@ -31,15 +32,48 @@ function Options({ questions, dispatch, answer }) {
     setShuffledOptions(shuffleArray(allOptions));
   }, [questions]);
 
+  // Define animation variants for options
+  const optionVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    selected: { scale: 1.1, transition: { duration: 0.3 } },
+  };
+
+  const containerVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0.8,
+      y: -30, // Start off slightly higher
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0, // Settle to the original position
+      transition: {
+        type: "spring",
+        stiffness: 120,
+        damping: 12,
+        staggerChildren: 0.1,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
   return (
-    <div className="options">
-      {shuffledOptions.map((option) => {
+    <motion.div
+      className="options"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {shuffledOptions.map((option, i) => {
         const isCorrect =
           option === decodeHtmlEntities(questions.correct_answer);
         const isChosen = option === answer;
+
         return (
-          <button
-            key={option}
+          <motion.button
+            key={i}
             disabled={hasAnswered}
             className={`option ${
               hasAnswered
@@ -51,12 +85,16 @@ function Options({ questions, dispatch, answer }) {
                 : ""
             }`}
             onClick={() => dispatch({ type: "NewAnswer", payload: option })}
+            initial="hidden"
+            animate="visible"
+            whileTap="selected"
+            variants={optionVariants} // Apply animation variants to each option
           >
             {option}
-          </button>
+          </motion.button>
         );
       })}
-    </div>
+    </motion.div>
   );
 }
 

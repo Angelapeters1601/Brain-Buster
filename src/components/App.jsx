@@ -32,6 +32,7 @@ const initialState = {
   point: 0,
   maxPossiblePoint: null,
   categoryName: "",
+  highscore: parseInt(localStorage.getItem("highscore"), 10) || 0,
 };
 
 const subjects = [
@@ -63,7 +64,11 @@ const reducer = (state, action) => {
       return { ...state, status: "subjectSelection" };
     }
     case "BackHome": {
-      return { ...state, status: "home" };
+      return {
+        ...initialState,
+        category: state.category,
+        highscore: state.highscore,
+      };
     }
     case "CategorySelected": {
       return {
@@ -101,6 +106,7 @@ const reducer = (state, action) => {
         difficulty: state.difficulty,
         questions: action.payload,
         maxPossiblePoint: maxPoints,
+        secondsRemaining: action.payload.length * SECS_PER_QUESTION,
       };
     case "DataFailed":
       return { ...state, status: "error", error: action.payload };
@@ -118,19 +124,31 @@ const reducer = (state, action) => {
     case "NextQuestion":
       return { ...state, index: state.index + 1, answer: null };
     case "Finish":
-      return { ...state, status: "finished" };
+      const newHighscore = Math.max(state.point, state.highscore);
+      localStorage.setItem("highscore", newHighscore);
+      return {
+        ...state,
+        status: "finished",
+        highscore: newHighscore,
+      };
     case "Restart":
       return {
         ...initialState,
         questions: state.questions,
+        highscore: state.highscore,
         status: "subjectSelection",
         answer: null,
       };
     case "Tick":
+      const isTimeUp = state.secondsRemaining === 1;
+
       return {
         ...state,
         secondsRemaining: state.secondsRemaining - 1,
-        status: state.secondsRemaining === 0 ? "finished" : state.status,
+        status: isTimeUp ? "finished" : state.status,
+        highscore: isTimeUp
+          ? Math.max(state.point, state.highscore)
+          : state.highscore,
       };
     default:
       throw new Error("unknown action");
@@ -152,6 +170,7 @@ function App() {
     answer,
     secondsRemaining,
     maxPossiblePoint,
+    highscore,
   } = state;
 
   const numQuestions = questions.length;
@@ -170,7 +189,7 @@ function App() {
         dispatch({ type: "DataRecieved", payload: data.results });
       } catch (error) {
         console.error(error, "error");
-        dispatch({ type: "DataFailed", payload: error });
+        dispatch({ type: "DataFailed", payload: error.message });
       }
     };
     if (status === "loading") {
@@ -237,6 +256,7 @@ function App() {
             dispatch={dispatch}
             points={point}
             maxPossiblePoint={maxPossiblePoint}
+            highscore={highscore}
           />
         )}
       </div>
