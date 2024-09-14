@@ -66,6 +66,7 @@ body {
 .header-title h1 {
   font-size: 2rem;
   color: var(--brown);
+  text-shadow: var(--shadow);
 }
 
 .header-subtitle {
@@ -78,6 +79,7 @@ body {
 .header-subtitle h1 {
   font-size: 3rem;
   color: var(--brown);
+  text-shadow: var(--shadow);
 }
 
 .user-icon {
